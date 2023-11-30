@@ -1,4 +1,4 @@
-package org.checkers;
+package org.checkers.client;
 
 import javax.swing.*;
 import java.awt.*;

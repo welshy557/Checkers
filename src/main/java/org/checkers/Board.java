@@ -1,9 +1,11 @@
 package org.checkers;
 
+import org.checkers.server.Util;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class Board extends JPanel {
+public class ArrayUtil extends JPanel {
     public final static BoardPiece[][] grid = new BoardPiece[8][8];
     public static Checker selectedChecker = null;
     public static Color playersTurn = Color.BLACK;
@@ -14,7 +16,7 @@ public class Board extends JPanel {
     public static int blackCheckerCount = 0;
 
 
-    public Board() {
+    public ArrayUtil() {
         this.setLayout(new GridLayout(8, 8));
         this.setSize(BoardPiece.SIZE * grid.length, grid[0].length * BoardPiece.SIZE);
         for (int row = 0; row < 8; row++) {
@@ -27,27 +29,37 @@ public class Board extends JPanel {
     }
 
 
-    @Override
-    public void paintComponent(Graphics g){
-        Graphics2D g2d = (Graphics2D) g;
-        int w2 = getWidth() / 2;
-        int h2 = getHeight() / 2;
-        g2d.rotate(-Math.PI / 2, w2, h2);
-        super.paintComponent(g);
-    }
+//    @Override
+//    public void paintComponent(Graphics g){
+//        if (Board.playersColor != null && Board.playersColor.equals(Color.BLACK)) {
+//            Graphics2D g2d = (Graphics2D) g;
+//            int w2 = getWidth() / 2;
+//            int h2 = getHeight() / 2;
+//            g2d.rotate(Math.PI, w2, h2);
+//        }
+//
+//        super.paintComponent(g);
+//    }
 
     public static void flipTurn(Color color) {
         playersTurn = color == Color.black ? Color.RED : Color.BLACK;
-        CheckerFrame.footer.playersTurn.setText(String.format("Turn: %s", Board.playersTurn == Color.BLACK ? "Black" : "Red"));
+        CheckerFrame.footer.playersTurn.setText(String.format("Turn: %s", ArrayUtil.playersTurn == Color.BLACK ? "Black" : "Red"));
     }
 
     public static void setTurn(Color color) {
         playersTurn = color;
-        CheckerFrame.footer.playersTurn.setText(String.format("Turn: %s", Board.playersTurn == Color.BLACK ? "Black" : "Red"));
+        CheckerFrame.footer.playersTurn.setText(String.format("Turn: %s", ArrayUtil.playersTurn == Color.BLACK ? "Black" : "Red"));
     }
 
     public static void resetBoard(Color playersColor) {
-        Board.playersColor = playersColor;
+        ArrayUtil.playersColor = playersColor;
+
+        if (playersColor.equals(Color.RED)) {
+            Util.flipMatrix();
+        }
+
+
+
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 BoardPiece boardPiece = grid[row][col];
@@ -60,11 +72,16 @@ public class Board extends JPanel {
             }
         }
 
+//        CheckerFrame.board.repaint();
+
         redCheckerCount = 12;
         blackCheckerCount = 12;
         setTurn(Color.BLACK);
     }
 
+    public static void flipBoard() {
+
+    }
     public static void gameOver() {
         // TODO Implement game over logic
         System.out.println("GAME OVER");

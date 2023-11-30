@@ -13,8 +13,8 @@ import java.util.List;
 public class BoardPiece extends JPanel  {
     private final BoardPieceMouseListener listener = new BoardPieceMouseListener();
     public static int SIZE = 75;
-    public final int row;
-    public final int col;
+    public int row;
+    public int col;
     public boolean isSelected = false;
     private final Color color;
     public Checker checker;
@@ -65,9 +65,7 @@ public class BoardPiece extends JPanel  {
     }
 
     public BoardPiece[] getDiagnolSquares(Color color, boolean isKing, boolean ignoreBlockingCheckers) {
-
         BoardPiece[] diagnolSquares = new BoardPiece[4];
-
 
         if (color == Color.BLACK ? this.row < Board.grid.length - 1 : this.row > 0) {
             int row = color == Color.BLACK ? this.row + 1 : this.row - 1;

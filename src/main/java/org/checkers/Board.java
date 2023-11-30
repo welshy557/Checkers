@@ -26,16 +26,6 @@ public class Board extends JPanel {
         }
     }
 
-
-    @Override
-    public void paintComponent(Graphics g){
-        Graphics2D g2d = (Graphics2D) g;
-        int w2 = getWidth() / 2;
-        int h2 = getHeight() / 2;
-        g2d.rotate(-Math.PI / 2, w2, h2);
-        super.paintComponent(g);
-    }
-
     public static void flipTurn(Color color) {
         playersTurn = color == Color.black ? Color.RED : Color.BLACK;
         CheckerFrame.footer.playersTurn.setText(String.format("Turn: %s", Board.playersTurn == Color.BLACK ? "Black" : "Red"));
@@ -48,6 +38,8 @@ public class Board extends JPanel {
 
     public static void resetBoard(Color playersColor) {
         Board.playersColor = playersColor;
+        if (playersColor.equals(Color.BLACK)) flipBoard();
+
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 BoardPiece boardPiece = grid[row][col];
@@ -65,6 +57,25 @@ public class Board extends JPanel {
         setTurn(Color.BLACK);
     }
 
+
+    public static void flipBoard() {
+        // Reverse elements in each row
+        for (BoardPiece[] row : grid) {
+            ArrayUtil.reverseArray(row);
+        }
+
+        // Reverse the order of rows
+        ArrayUtil.reverseArray(grid);
+
+        // Update BoardPiece Row and Columns
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                BoardPiece boardPiece = grid[row][col];
+                boardPiece.row = row;
+                boardPiece.col = col;
+            }
+        }
+    }
     public static void gameOver() {
         // TODO Implement game over logic
         System.out.println("GAME OVER");

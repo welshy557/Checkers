@@ -1,6 +1,5 @@
 package org.checkers;
 
-import org.checkers.server.Connection;
 import org.checkers.server.requests.ConnectionRequest;
 
 import javax.swing.*;
@@ -15,7 +14,7 @@ public class Footer extends JPanel {
     JButton connectButton;
     public Footer() {
         super();
-        setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5)); // Adjust the gap values as needed
+        setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
         this.setSize(Board.grid.length * BoardPiece.SIZE, 50);
 
         clientID = new JLabel("Connecting To Server...");

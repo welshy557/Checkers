@@ -24,8 +24,6 @@ public class Checker extends JComponent {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(Board.playersColor);
-
                 if (!(color.equals(Board.playersColor) && color.equals(Board.playersTurn))) return;
                 moves = getMoves();
                 toggleSelectChecker(false);

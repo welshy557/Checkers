@@ -3,7 +3,6 @@ package org.checkers;
 import org.checkers.server.requests.Move;
 import org.checkers.server.requests.StartGame;
 
-import java.awt.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;

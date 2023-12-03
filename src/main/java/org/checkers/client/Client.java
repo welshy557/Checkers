@@ -10,24 +10,41 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client {
-    private ObjectInputStream in;
-    public ObjectOutputStream out;
-
+    private final ObjectInputStream inputStream;
+    private final ObjectOutputStream outputStream;
+    private final Socket socket;
     public Integer id;
     public Client() {
         try {
-            Socket socket = new Socket("localhost", 5000);
-
-            in = new ObjectInputStream(socket.getInputStream());
-            out = new ObjectOutputStream(socket.getOutputStream());
+            socket = new Socket("localhost", 5000);
+            inputStream = new ObjectInputStream(socket.getInputStream());
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
 
             // Upon connection, server will send back an integer representing the clients ID to have other clients join
-            this.id = (Integer) in.readObject();
+            this.id = (Integer) inputStream.readObject();
             CheckerFrame.footer.clientID.setText(String.valueOf(this.id));
 
-            new ClientThread(socket, in, out).start();
+            new ClientThread(socket, inputStream, outputStream).start();
 
         } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void out(Object o) {
+        try {
+            outputStream.writeObject(o);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dispose() {
+        try {
+            this.inputStream.close();
+            this.outputStream.close();
+            this.socket.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -52,6 +69,7 @@ public class Client {
                     input = in.readObject();
 
                     if (input instanceof StartGame startGame) {
+                        System.out.println("Game Started");
                         Board.resetBoard(startGame.playersColor());
                         out.writeObject("Game Started");
                     }

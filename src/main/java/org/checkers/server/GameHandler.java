@@ -14,14 +14,13 @@ import java.util.HashMap;
 
 public class GameHandler extends Thread {
 
-    private Connection client1;
-    private Connection client2;
+    private final Connection client1;
+    private final Connection client2;
     private Connection clientsTurn;
 
     public GameHandler(Connection client1, Connection client2) {
         this.client1 = client1;
         this.client2 = client2;
-
         this.clientsTurn = client1;
     }
     public void run() {
@@ -38,7 +37,10 @@ public class GameHandler extends Thread {
                    clientsTurn = clientsTurn == client1 ? client2 : client1;
 
                }
-               if (input instanceof GameOver) break;
+               if (input instanceof GameOver) {
+                   System.out.printf("Game Over. Client 1: %d, Client 2: %d\n", client1.id, client2.id);
+                   break;
+               }
 
             }
 
@@ -46,8 +48,8 @@ public class GameHandler extends Thread {
             client2.gameStarted = false;
 
         } catch (IOException | ClassNotFoundException e) {
-            if (!(e instanceof EOFException))
-                e.printStackTrace();
+            if (e instanceof EOFException) clientsTurn.shouldTerminate = true;
+            else e.printStackTrace();
         }
     }
 }

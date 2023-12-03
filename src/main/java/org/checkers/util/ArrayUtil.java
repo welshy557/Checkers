@@ -1,6 +1,6 @@
-package org.checkers.client;
+package org.checkers.util;
 
-public class ArrayUtil{
+public class ArrayUtil {
 
     public static <T> void reverseArray(T[] array) {
         int start = 0;

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class Server {
+    public static volatile HashMap<Integer, Connection> connections = new HashMap<>();
     public static void main(String[] args) throws IOException {
         Server server = new Server();
         server.start(5000);
@@ -13,7 +14,6 @@ public class Server {
 
     private ServerSocket serverSocket;
 
-    private HashMap<Integer, Connection> connections = new HashMap<>();
 
     public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -21,7 +21,7 @@ public class Server {
         int count = 0;
         while (true) {
             Socket client = serverSocket.accept();
-            new ClientHandler(client, connections, count++).start();
+            new ClientHandler(client, count++).start();
 
         }
     }

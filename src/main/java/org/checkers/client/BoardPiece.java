@@ -2,6 +2,7 @@ package org.checkers.client;
 
 
 import org.checkers.server.requests.Move;
+import org.checkers.util.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +38,7 @@ public class BoardPiece extends JPanel  {
         this.revalidate();
         this.repaint();
     }
-    public void removeChecker() {
+    public void removeChecker(boolean removedFromBoard) {
         if (checker == null) return;
 
         this.remove(this.checker);
@@ -48,8 +49,11 @@ public class BoardPiece extends JPanel  {
         removedChecker.boardPiece = null;
         this.checker = null;
 
-        if (removedChecker.color == Color.BLACK) Board.blackCheckerCount--;
-        else Board.redCheckerCount--;
+        if (removedFromBoard) {
+            if (removedChecker.color == Color.BLACK) Board.blackCheckerCount--;
+            else Board.redCheckerCount--;
+        }
+
 
         if (Board.redCheckerCount == 0 || Board.blackCheckerCount == 0) Board.gameOver();
 
@@ -105,17 +109,20 @@ public class BoardPiece extends JPanel  {
 
 
     public static void makeMove(BoardPiece fromBoardPiece, BoardPiece toBoardPiece) {
+        boolean promotingToKing = false;
+
         Checker selectedChecker = fromBoardPiece.checker;
         if (selectedChecker == null) throw new NullPointerException("Selected Checker is null");
 
-        fromBoardPiece.removeChecker();
+        fromBoardPiece.removeChecker(false);
         toBoardPiece.addChecker(selectedChecker);
 
         Board.flipTurn(selectedChecker.color);
 
         // Check for king promotion
-        if (selectedChecker.color == Color.BLACK ? toBoardPiece.row == Board.grid.length - 1 : toBoardPiece.row == 0) {
+        if (selectedChecker.color == Color.BLACK ? toBoardPiece.row == Board.grid.length - 1 : toBoardPiece.row == 0 && !selectedChecker.isKing) {
             selectedChecker.isKing = true;
+            promotingToKing = true;
         }
 
         // Remove pieces that were jumped from board
@@ -123,12 +130,15 @@ public class BoardPiece extends JPanel  {
 
         if (checkersToRemove == null) return;
 
+        // Play the appropriate audio
+        if (promotingToKing) AudioPlayer.playPromote();
+        else if (!checkersToRemove.isEmpty()) AudioPlayer.playCapture();
+        else AudioPlayer.playMove();
+
+
         for (BoardPiece b: checkersToRemove) {
-            b.removeChecker();
+            b.removeChecker(true);
         }
-
-
-
     }
 
     @Override
@@ -150,11 +160,7 @@ public class BoardPiece extends JPanel  {
             BoardPiece toBoardPiece = (BoardPiece) e.getComponent();
 
             // Send move to opponent
-            try {
-                Main.client.out.writeObject(new Move(fromBoardPiece.row, fromBoardPiece.col, toBoardPiece.row, toBoardPiece.col));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            Main.client.out(new Move(fromBoardPiece.row, fromBoardPiece.col, toBoardPiece.row, toBoardPiece.col));
 
             makeMove(fromBoardPiece, toBoardPiece);
 

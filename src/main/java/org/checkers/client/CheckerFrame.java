@@ -1,31 +1,38 @@
 package org.checkers.client;
 
 
+import org.checkers.util.AudioPlayer;
+
 import java.awt.*;
 import javax.swing.*;
 
 
-public class CheckerFrame {
+public class CheckerFrame extends JFrame {
     public static Board board;
     public static Footer footer;
 
-
     public CheckerFrame() {
-        JFrame frame = new JFrame("Checkers");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle("Checkers");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         board = new Board();
         footer = new Footer();
 
-        frame.getContentPane().add(board);
-        frame.getContentPane().add(footer, BorderLayout.SOUTH);
+        this.getContentPane().add(board);
+        this.getContentPane().add(footer, BorderLayout.SOUTH);
 
-        frame.setSize(board.getSize().width, board.getSize().height + footer.getSize().height);
+        this.setSize(board.getSize().width, board.getSize().height + footer.getSize().height);
 
-        frame.setResizable(false);
-        frame.setVisible(true);
-
-
+        this.setResizable(false);
+        this.setVisible(true);
     }
+
+    @Override
+    public void dispose() {
+        Main.client.dispose();
+        super.dispose();
+    }
+
+
 
 }
